@@ -1,0 +1,32 @@
+[CMake]
+Build Directory Count=1
+Current Build Directory Index=0
+
+[CMake][CMake Build Directory 0]
+Build Directory Path=/home/jeroensweerts/Udacity/Self_Driving_CarND/term2/CarND-Unscented-Kalman-Filter-Project/build
+Build Type=
+CMake Binary=/usr/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=/usr/local
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=UnscentedKF
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00J\x00C\x00a\x00r\x00N\x00D\x00-\x00U\x00n\x00s\x00c\x00e\x00n\x00t\x00e\x00d\x00-\x00K\x00a\x00l\x00m\x00a\x00n\x00-\x00F\x00i\x00l\x00t\x00e\x00r\x00-\x00P\x00r\x00o\x00j\x00e\x00c\x00t\x00\x00\x00\x16\x00U\x00n\x00s\x00c\x00e\x00n\x00t\x00e\x00d\x00K\x00F)
+Dependency Action=Build
+EnvironmentGroup=
+Executable=file:///home/jeroensweerts/Udacity/Self_Driving_CarND/term2/CarND-Unscented-Kalman-Filter-Project/build/UnscentedKF
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=CarND-Unscented-Kalman-Filter-Project,UnscentedKF
+Use External Terminal=false
+Working Directory=
+isExecutable=false
