@@ -45,12 +45,34 @@ UKF::UKF() {
   std_radrd_ = 0.3;
 
   /**
-  TODO:
+  TODO 1:
 
   Complete the initialization. See ukf.h for other member properties.
 
   Hint: one or more values initialized above might be wildly off...
   */
+  
+    ///* initially set to false, set to true in first call of ProcessMeasurement
+  bool is_initialized_= true;
+  
+  ///* predicted sigma points matrix
+  MatrixXd Xsig_pred_;
+
+  ///* time when the state is true, in us
+  long long time_us_; 
+  
+    ///* Weights of sigma points
+  VectorXd weights_;
+
+  ///* State dimension
+  int n_x_;
+
+  ///* Augmented state dimension
+  int n_aug_;
+
+  ///* Sigma point spreading parameter
+  double lambda_;
+  
 }
 
 UKF::~UKF() {}
@@ -61,7 +83,7 @@ UKF::~UKF() {}
  */
 void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   /**
-  TODO:
+  TODO 2:
 
   Complete this function! Make sure you switch between lidar and radar
   measurements.
@@ -75,7 +97,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
  */
 void UKF::Prediction(double delta_t) {
   /**
-  TODO:
+  TODO 3:
 
   Complete this function! Estimate the object's location. Modify the state
   vector, x_. Predict sigma points, the state, and the state covariance matrix.
@@ -88,7 +110,7 @@ void UKF::Prediction(double delta_t) {
  */
 void UKF::UpdateLidar(MeasurementPackage meas_package) {
   /**
-  TODO:
+  TODO 4:
 
   Complete this function! Use lidar data to update the belief about the object's
   position. Modify the state vector, x_, and covariance, P_.
@@ -103,7 +125,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
  */
 void UKF::UpdateRadar(MeasurementPackage meas_package) {
   /**
-  TODO:
+  TODO 5:
 
   Complete this function! Use radar data to update the belief about the object's
   position. Modify the state vector, x_, and covariance, P_.
