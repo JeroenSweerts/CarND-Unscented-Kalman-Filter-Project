@@ -18,7 +18,7 @@ UKF::UKF() {
   use_radar_ = true;
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 0.2;
+  std_a_ = 0.02;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
   std_yawdd_ = 0.2;
@@ -33,10 +33,10 @@ UKF::UKF() {
   std_radr_ = 0.3;
 
   // Radar measurement noise standard deviation angle in rad
-  std_radphi_ = 0.0175;
+  std_radphi_ = 0.03;
 
   // Radar measurement noise standard deviation radius change in m/s
-  std_radrd_ = 0.1;
+  std_radrd_ = 0.3;
 
   /**
   TODO 1:
@@ -90,13 +90,21 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   */
   
   if (!is_initialized_) {
-    x_ << 0, 0, 0, 0, 0;
-    P_ << 1, 0, 0, 0, 0,
-          0, 1, 0, 0, 0,
-          0, 0, 1, 0, 0,
-          0, 0, 0, 1, 0,
-          0, 0, 0, 0, 1;      
-          
+      if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+          x_[0] = (meas_package.raw_measurements_[0] * sin(meas_package.raw_measurements_[1]))/tan(meas_package.raw_measurements_[1]);
+          x_[1] = x_[0]*tan(meas_package.raw_measurements_[1]);
+          x_[2]=0;
+          x_[3]=0;
+          x_[4]=0;
+      }
+      
+      else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
+          x_ << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1],0,0,0;
+      }
+    //x_ << 0.5, 0.5, 0.5, 0.5, 0.5;
+    
+    
+    P_ = MatrixXd::Identity(5,5)*0.5;          
     time_us_ = meas_package.timestamp_;
   }
   
@@ -196,7 +204,7 @@ void UKF::Prediction(double delta_t) {
          double yawd_p = yawd;
          
          //add noise
-         px_p = px_p + 0.5*nu_a*delta_t*delta_t;
+         px_p = px_p + 0.5*nu_a*delta_t*delta_t * cos(yaw);
          py_p = py_p + 0.5*nu_a*delta_t*delta_t * sin(yaw);
          v_p = v_p + nu_a*delta_t;
          
@@ -208,7 +216,7 @@ void UKF::Prediction(double delta_t) {
          Xsig_pred_(1,i) = py_p;
          Xsig_pred_(2,i) = v_p;
          Xsig_pred_(3,i) = yaw_p;
-         Xsig_pred_(4,i) = yaw_p;         
+         Xsig_pred_(4,i) = yawd_p;         
     }
   
   //step 3: Predict Mean and Covariance
@@ -305,7 +313,13 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
         //measurement model
         Zsig(0,i) = sqrt(p_x*p_x + p_y*p_y);
         Zsig(1,i) = atan2(p_y,p_x);
-        Zsig(2,i) = (p_x*v1 + p_y*v2) / sqrt(p_x*p_x + p_y*p_y);        
+//         if (fabs(Zsig(0,i)) < 0.00001) {
+//             Zsig(0,i) = 0;
+//         }
+//         else {
+//             Zsig(2,i) = (p_x*v1 + p_y*v2) / sqrt(p_x*p_x + p_y*p_y);   
+//         }
+        Zsig(2,i) = (p_x*v1 + p_y*v2) / sqrt(p_x*p_x + p_y*p_y);
     }
      
 //     //mean predicted measurement
@@ -341,6 +355,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     //create vector for incoming radar measurement
     VectorXd z = VectorXd(n_z);
     z = meas_package.raw_measurements_;
+    std::cout<<z<<endl;
     
     //create matrix for cross correlation Tc
     MatrixXd Tc = MatrixXd(n_x_, n_z);
@@ -374,6 +389,6 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     while (z_diff(1)<-M_PI) z_diff(1)+=2.*M_PI;   
     
     //update state mean and covariance matrix
-    x_ = x_ + K * z_diff;
+    x_ = x_ + K * z_diff;    
     P_ = P_ - K*S*K.transpose();    
 }
